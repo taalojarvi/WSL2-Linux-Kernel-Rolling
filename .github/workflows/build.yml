@@ -18,10 +18,6 @@ jobs:
       X86_ADDON_SHA: ${{ steps.gen-sha-256.outputs.X86_ADDON_SHA }}
       X86_RT_IMAGE_SHA: ${{ steps.gen-sha-256.outputs.X86_RT_IMAGE_SHA }}
       X86_RT_ADDON_SHA: ${{ steps.gen-sha-256.outputs.X86_RT_ADDON_SHA }}
-      ARM64_IMAGE_SHA: ${{ steps.gen-sha-256.outputs.ARM64_IMAGE_SHA }}
-      ARM64_ADDON_SHA: ${{ steps.gen-sha-256.outputs.ARM64_ADDON_SHA }}
-      ARM64_RT_IMAGE_SHA: ${{ steps.gen-sha-256.outputs.ARM64_RT_IMAGE_SHA }}
-      ARM64_RT_ADDON_SHA: ${{ steps.gen-sha-256.outputs.ARM64_RT_ADDON_SHA }}
     strategy:
       matrix:
         include:
@@ -31,12 +27,6 @@ jobs:
           - arch: x86-rt
             image-name: bzImage-x86_64-rt
             os: ubuntu-24.04
-          - arch: arm64
-            image-name: Image-arm64
-            os: ubuntu-24.04-arm
-          - arch: arm64-rt
-            image-name: Image-arm64-rt
-            os: ubuntu-24.04-arm
 
     steps:
       - name: Trust Build Directory
@@ -230,10 +220,6 @@ jobs:
       X86_ADDON_SHA: ${{ needs.build.outputs.X86_ADDON_SHA }}
       X86_RT_IMAGE_SHA: ${{ needs.build.outputs.X86_RT_IMAGE_SHA }}
       X86_RT_ADDON_SHA: ${{ needs.build.outputs.X86_RT_ADDON_SHA }}
-      ARM64_IMAGE_SHA: ${{ needs.build.outputs.ARM64_IMAGE_SHA }}
-      ARM64_ADDON_SHA: ${{ needs.build.outputs.ARM64_ADDON_SHA }}
-      ARM64_RT_IMAGE_SHA: ${{ needs.build.outputs.ARM64_RT_IMAGE_SHA }}
-      ARM64_RT_ADDON_SHA: ${{ needs.build.outputs.ARM64_RT_ADDON_SHA }}
 
     steps:
       - uses: actions/checkout@main
@@ -247,10 +233,6 @@ jobs:
           name: ${{ github.ref_name }}
           tag_name: ${{ github.ref_name }}
           body: |
-            > [!WARNING]
-            > ARM64 kernel has not been tested!
-            >
-            > If you have any issues, please leave an issue on the [issue tab](https://github.com/Nevuly/WSL2-Rolling-Kernel-Issue/issues)!
 
             ### **Hash Information**
             | File Name | SHA-256 Checksum |
@@ -259,10 +241,6 @@ jobs:
             | bzImage-x86_64-addon.vhdx | ${{ env.X86_ADDON_SHA }} |
             | bzImage-x86_64-rt | ${{ env.X86_RT_IMAGE_SHA }} |
             | bzImage-x86_64-rt-addon.vhdx | ${{ env.X86_RT_ADDON_SHA }} |
-            | Image-arm64 | ${{ env.ARM64_IMAGE_SHA }} |
-            | Image-arm64-addon.vhdx | ${{ env.ARM64_ADDON_SHA }} |
-            | Image-arm64-rt | ${{ env.ARM64_RT_IMAGE_SHA }} |
-            | Image-arm64-rt-addon.vhdx | ${{ env.ARM64_RT_ADDON_SHA }} |
 
             ### **How to install this kernel or kernel addon package in WSL2?**
              - Please see this [wiki](https://github.com/Nevuly/WSL2-Linux-Kernel-Rolling/wiki/Install-Instructions).
