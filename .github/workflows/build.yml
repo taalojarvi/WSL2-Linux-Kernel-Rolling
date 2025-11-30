@@ -4,7 +4,7 @@ on:
   push:
     tags:
       - 'linux-wsl-stable-6.17.[0-9]+'
-
+  workflow_dispatch:
 run-name: Stable Release Build ${{ github.ref_name }}
 
 jobs:
