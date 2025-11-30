@@ -271,5 +271,5 @@ jobs:
 
           files: |
             release_images/*/*
-          token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           fail_on_unmatched_files: true
