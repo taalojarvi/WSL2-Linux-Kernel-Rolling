@@ -2,16 +2,16 @@ name: Stable Kernel CI
 
 on:
   push:
-    tags:
-      - 'linux-wsl-stable-6.17.[0-9]+'
   workflow_dispatch:
+  schedule:
+    - cron: '0 0 1 * *' 
 run-name: Stable Release Build ${{ github.ref_name }}
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     container:
-      image: nevuly/nevuly-dev-base:build
+      image: cachyos/cachyos-v3:latest
       options: --privileged
     outputs:
       X86_IMAGE_SHA: ${{ steps.gen-sha-256.outputs.X86_IMAGE_SHA }}
@@ -23,16 +23,25 @@ jobs:
         include:
           - arch: x86
             image-name: bzImage-x86_64
-            os: ubuntu-24.04
+            os: ubuntu-latest
           - arch: x86-rt
             image-name: bzImage-x86_64-rt
-            os: ubuntu-24.04
+            os: ubuntu-latest
 
     steps:
       - name: Trust Build Directory
         run: |
           git config --global --add safe.directory /__w/WSL2-Linux-Kernel-Rolling/WSL2-Linux-Kernel-Rolling
-
+          
+      - name: Install dependencies
+        id: dep
+        run: |
+          pacman -Syu --noconfirm pahole xmlto inetutils bc cpio jq ccache git python go mimalloc qemu-img rsync
+          GOBIN=/usr/bin go install go.chromium.org/luci/cipd/client/cmd/...@latest
+          cipd install fuchsia/third_party/clang/linux-amd64 latest -root /usr/local/fuchsia-clang
+          echo "PATH=/usr/local/fuchsia-clang/bin:$PATH" >> $GITHUB_ENV
+          echo "/usr/lib/libmimalloc.so" > /etc/ld.so.preload
+          
       - name: Checkout
         uses: actions/checkout@main
 
